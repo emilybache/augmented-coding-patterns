@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import pytest
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root / "tools"))
@@ -598,3 +599,194 @@ def test_restructure_svg_removes_original_elements_and_adds_semantic_groups():
     assert new_child_count > 0
     groups_with_class = [child for child in root if 'class' in child.attrib]
     assert len(groups_with_class) > 0
+
+
+def test_map_element_determines_obstacle_with_partial_color_match():
+    shape = SvgShape("shape", Position(0, 0), "#ffc9c9ff")
+
+    element = MapElement(shape)
+
+    assert element.node_type == 'obstacle'
+
+
+def test_map_element_determines_unknown_for_empty_color():
+    shape = SvgShape("shape", Position(0, 0), "")
+
+    element = MapElement(shape)
+
+    assert element.node_type == 'unknown'
+
+
+def test_position_calculates_distance_with_negative_coordinates():
+    position1 = Position(-100, -200)
+    position2 = Position(-97, -196)
+
+    distance = position1.distance_to(position2)
+
+    assert distance == 5.0
+
+
+def test_position_calculates_distance_with_mixed_signs():
+    position1 = Position(-10, 10)
+    position2 = Position(10, -10)
+
+    distance = position1.distance_to(position2)
+
+    assert abs(distance - 28.284271247461902) < 0.0001
+
+
+def test_parse_translate_returns_none_for_invalid_format():
+    from process_map import parse_translate
+
+    result = parse_translate("invalid_transform")
+
+    assert result is None
+
+
+def test_parse_translate_returns_none_for_empty_string():
+    from process_map import parse_translate
+
+    result = parse_translate("")
+
+    assert result is None
+
+
+def test_parse_translate_handles_negative_values():
+    from process_map import parse_translate
+
+    result = parse_translate("translate(-100.5 -200.7)")
+
+    assert result == (-100.5, -200.7)
+
+
+def test_extract_text_content_handles_whitespace_only_text():
+    from process_map import extract_text_content
+    svg_ns = "{http://www.w3.org/2000/svg}"
+    text_element = ET.Element(f'{svg_ns}text')
+    text_element.text = '   \t\n   '
+
+    result = extract_text_content(text_element)
+
+    assert result == ''
+
+
+def test_identify_shapes_from_empty_svg_returns_empty_list():
+    svg_ns = "{http://www.w3.org/2000/svg}"
+    root = ET.Element(f'{svg_ns}svg')
+
+    shapes = identify_shapes_from_svg(root)
+
+    assert shapes == []
+
+
+def test_identify_labels_from_empty_svg_returns_empty_list():
+    svg_ns = "{http://www.w3.org/2000/svg}"
+    root = ET.Element(f'{svg_ns}svg')
+
+    labels = identify_labels_from_svg(root)
+
+    assert labels == []
+
+
+def test_build_map_elements_with_empty_shapes_returns_empty():
+    elements = build_map_elements([], [])
+
+    assert elements == []
+
+
+def test_match_nearest_label_with_multiple_equidistant_labels_returns_first():
+    shape = SvgShape("shape", Position(100, 100), '#b2f2bb')
+    label1 = SvgText("text1", Position(105, 100), "Label 1")
+    label2 = SvgText("text2", Position(95, 100), "Label 2")
+
+    matched = match_nearest_label(shape, [label1, label2], max_distance=150)
+
+    assert matched == label1
+
+
+def test_build_map_elements_with_duplicate_labels():
+    shape1 = SvgShape("shape1", Position(100, 100), '#b2f2bb')
+    shape2 = SvgShape("shape2", Position(200, 200), '#ffc9c9')
+    duplicate_label = SvgText("text", Position(105, 105), "Same Name")
+    duplicate_label2 = SvgText("text2", Position(205, 205), "Same Name")
+
+    elements = build_map_elements([shape1, shape2], [duplicate_label, duplicate_label2])
+
+    assert len(elements) == 2
+    assert elements[0].name == "Same Name"
+    assert elements[1].name == "Same Name"
+
+
+def test_build_map_elements_with_no_valid_name_labels():
+    shape = SvgShape("shape", Position(100, 100), '#b2f2bb')
+    number_only = SvgText("num", Position(102, 102), '42')
+
+    elements = build_map_elements([shape], [number_only])
+
+    assert len(elements) == 1
+    assert elements[0].name is None
+    assert elements[0].number.content == '42'
+
+
+class TestBugMagnetSession20251114:
+    def test_map_element_with_unicode_text(self):
+        shape = SvgShape("shape", Position(0, 0), "#b2f2bb")
+        unicode_text = SvgText("text", Position(5, 5), "Café 北京 مرحبا 🎨")
+
+        element = MapElement(shape, texts=[unicode_text])
+
+        assert element.name == "Café 北京 مرحبا 🎨"
+
+    def test_map_element_with_empty_string_text(self):
+        shape = SvgShape("shape", Position(0, 0), "#b2f2bb")
+        empty_text = SvgText("text", Position(5, 5), "")
+
+        element = MapElement(shape, texts=[empty_text])
+
+        assert element.name == ""
+
+    def test_position_with_zero_coordinates(self):
+        position = Position(0, 0)
+
+        assert position.x == 0
+        assert position.y == 0
+        assert position.distance_to(Position(0, 0)) == 0
+
+    def test_build_map_elements_with_overlapping_shapes_and_labels(self):
+        shape1 = SvgShape("s1", Position(100, 100), '#b2f2bb')
+        shape2 = SvgShape("s2", Position(102, 102), '#ffc9c9')
+        label = SvgText("l1", Position(101, 101), "Shared Label")
+
+        elements = build_map_elements([shape1, shape2], [label])
+
+        assert len(elements) == 1
+        assert elements[0].name == "Shared Label"
+
+    def test_multiple_shapes_compete_for_same_number_label(self):
+        shape1 = SvgShape("s1", Position(100, 100), '#b2f2bb')
+        shape2 = SvgShape("s2", Position(105, 105), '#ffc9c9')
+        number = SvgText("num", Position(102, 102), '1')
+
+        elements = build_map_elements([shape1, shape2], [number])
+
+        numbers_assigned = sum(1 for e in elements if e.number is not None)
+        assert numbers_assigned == 1
+
+    def test_extract_text_with_position_handles_multiple_text_elements(self):
+        from process_map import extract_text_with_position
+        svg_ns = "{http://www.w3.org/2000/svg}"
+        group = ET.Element(f'{svg_ns}g')
+        text1 = ET.SubElement(group, f'{svg_ns}text')
+        text1.set('x', '10')
+        text1.set('y', '20')
+        text1.text = 'First'
+        text2 = ET.SubElement(group, f'{svg_ns}text')
+        text2.set('x', '30')
+        text2.set('y', '40')
+        text2.text = 'Second'
+
+        content, x, y = extract_text_with_position(group)
+
+        assert content == 'First Second'
+        assert x == 30
+        assert y == 40
