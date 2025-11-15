@@ -16,7 +16,7 @@ Legend: ⛰ Obstacle | 🧩 Pattern | ⚠️ Anti-pattern
 - [⚠️ 5 Distracted Agent](documents/anti-patterns/distracted-agent.md)
 - [⛰️ Limited Focus](documents/obstacles/limited-focus.md)
 - [🧩 6 Focused Agent](documents/patterns/focused-agent.md)
-- [🧩 7 References](documents/patterns/references.md)
+- [🧩 7 References](documents/patterns/reference-docs.md)
 - [🧩 8 Knowledge Composition](documents/patterns/knowledge-composition.md)
 
 ### Noise
