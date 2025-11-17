@@ -1,3 +1,7 @@
+---
+authors: [lada_kesseler]
+---
+
 # Selective Hearing (Obstacle)
 
 ## Description
@@ -14,7 +18,9 @@ When your instructions clash with deeply ingrained patterns (like "don't comment
 The AI cannot hear you over the roar of its training data.
 
 ### 2. Attention overload (distracted agent)
-As tasks grow complex, AI's attention narrows to the main goal. Your ground rules and constraints get filtered out as "less important" - the AI is so focused on solving the problem that it has no attention for your additional guidance. Your constraints get filtered out as "noise" as all available attention flows to the main task. 
+As tasks grow complex, AI's attention narrows to the main goal. 
+Your ground rules and constraints get filtered out as "less important" - the AI is so focused on solving the problem that it has no attention for your additional guidance. 
+Your constraints get filtered out as "noise" as all available attention flows to the main task.
 
 ## Impact
 - Random compliance — instructions work unpredictably
