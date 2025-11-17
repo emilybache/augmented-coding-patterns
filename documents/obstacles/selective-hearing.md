@@ -32,4 +32,3 @@ Your constraints get filtered out as "noise" as all available attention flows to
 **Fighting training:** Tell AI "no comments in code" → it complies briefly → silently reverts because comments are everywhere in its training data.
 
 **Attention overload**: Asking it to run tests after every refactoring. It initially complies, then as refactoring continues, AI gets absorbed in the code transformation and starts skipping tests - its attention is consumed by the main task.
-```
