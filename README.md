@@ -18,4 +18,6 @@ documents/
 
 See [CONTRIBUTE.md](./CONTRIBUTE.md) for detailed guidelines on adding patterns, anti-patterns, or obstacles.
 
+**Using Claude Code?** Run `/contribute` to start an interactive contribution workflow.
+
 New contributions go in the appropriate `documents/` subdirectory following the structure and format described in the contributing guide.
