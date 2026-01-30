@@ -8,9 +8,7 @@ This is a Next.js 15 static documentation website that presents an evolving coll
 
 ## Architecture
 
-The project has a two-layer structure:
-- **Content layer** (`/documents/`): Markdown source files for patterns, anti-patterns, and obstacles
-- **Application layer** (`/website/`): Next.js application that reads and renders the content
+See `specs/project.md` for the overall architecture and `specs/map.md` for the full directory map.
 
 All development work happens in the `/website/` directory.
 
@@ -73,7 +71,7 @@ This is a static export (`output: 'export'`) for GitHub Pages:
 
 To add a new pattern, anti-pattern, or obstacle:
 1. Create `documents/{category}/{slug}.md`
-2. Include frontmatter with `authors: [author_id]`
+2. Include frontmatter with `authors: [author_id]` (see `specs/frontmatter.md` for all supported fields)
 3. Start with an H1 title (can include emoji)
 4. Add content sections (Problem, Solution, Example, etc.)
 5. Update `documents/relationships.mmd` to define relationships
@@ -84,27 +82,8 @@ To add a new pattern, anti-pattern, or obstacle:
 - **Unit tests** (`npm test`): Comprehensive coverage of components and utilities
 - **E2E tests** (`npm run test:e2e`): Minimal smoke tests for critical paths only
 
-## Project Structure
-
-```
-website/
-├── app/                      # Next.js App Router pages and components
-│   ├── [category]/          # Dynamic category pages
-│   │   └── [slug]/          # Pattern detail pages
-│   ├── components/          # React components
-│   ├── lib/                 # Category config and types
-│   └── talk/                # Talk-specific pages
-├── lib/                     # Shared utilities
-│   ├── markdown.ts          # Content processing
-│   ├── relationships.ts     # Graph parsing
-│   └── types.ts            # TypeScript interfaces
-├── tests/                   # Jest and Playwright tests
-├── public/                  # Static assets
-└── config/                  # Author configuration
-```
-
 ## Existing Documentation
 
-- `/website/CLAUDE.md` - Detailed developer guide (6.9KB) with comprehensive instructions
+- `/specs/` - High-level project specs (architecture, content system, relationships, frontmatter, interactive map, website)
+- `/website/CLAUDE.md` - Detailed developer guide with implementation instructions
 - `/CONTRIBUTE.md` - Contribution workflow for adding content
-- `/interactive-map.md` - Interactive map feature documentation
