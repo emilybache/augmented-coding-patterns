@@ -30,6 +30,6 @@ synonyms: [Dementia]
 
 Optional. Array of alternate terms or names for the concept. Unlike `alternative_titles`, these are not full titles and don't imply URL redirects — they're vocabulary aliases that help people recognize the concept under a different name.
 
-Frontend support: none yet. The field exists in content (`context-rot.md`) but the website doesn't read or display it.
+Frontend support: display only. Parsed in `lib/markdown.ts` and displayed as "Synonyms: ..." on the detail page. No URL redirects or `generateStaticParams` changes.
 
 Added by Steve Kuo in commit `1d6176c`, moved to frontmatter in `9029de6`.

@@ -448,6 +448,29 @@ describe('Pattern Detail Page', () => {
     })
   })
 
+  describe('Synonyms Display', () => {
+    it('displays synonyms when present', async () => {
+      const patternWithSynonyms = {
+        ...mockPattern,
+        synonyms: ['Dementia', 'Memory Loss']
+      }
+      mockGetPatternBySlug.mockReturnValue(patternWithSynonyms)
+
+      const params = Promise.resolve({ category: 'obstacles', slug: 'context-rot' })
+      render(await PatternPage({ params }))
+
+      expect(screen.getByText(/Synonyms:/)).toBeInTheDocument()
+      expect(screen.getByText(/Dementia, Memory Loss/)).toBeInTheDocument()
+    })
+
+    it('does not display synonyms when absent', async () => {
+      const params = Promise.resolve({ category: 'patterns', slug: 'test-pattern-detail' })
+      render(await PatternPage({ params }))
+
+      expect(screen.queryByText(/Synonyms:/)).not.toBeInTheDocument()
+    })
+  })
+
   describe('Pattern without emoji', () => {
     it('renders correctly when pattern has no emoji', async () => {
       const patternWithoutEmoji = { ...mockPattern, emojiIndicator: undefined }

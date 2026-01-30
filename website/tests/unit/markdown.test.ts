@@ -378,6 +378,63 @@ AI defaults to silent compliance.`
       expect(pattern.alternativeTitles).toBeUndefined()
     })
 
+    it('should extract synonyms from frontmatter', () => {
+      const mockMarkdown = `---
+synonyms:
+  - Dementia
+  - Memory Loss
+---
+# Context Rot (Obstacle)
+
+## Description
+Context degrades as the conversation grows.`
+
+      mockedPath.join.mockReturnValue('/fake/path/documents/obstacles/context-rot.md')
+      mockedFs.readFileSync.mockReturnValue(mockMarkdown)
+
+      const pattern = getPatternBySlug('obstacles', 'context-rot')
+
+      expect(pattern).toBeDefined()
+      expect(pattern.synonyms).toEqual(['Dementia', 'Memory Loss'])
+    })
+
+    it('should handle pattern without synonyms', () => {
+      const mockMarkdown = `---
+authors: [lexler]
+---
+# Active Partner
+
+## Problem
+AI defaults to silent compliance.`
+
+      mockedPath.join.mockReturnValue('/fake/path/documents/patterns/active-partner.md')
+      mockedFs.readFileSync.mockReturnValue(mockMarkdown)
+
+      const pattern = getPatternBySlug('patterns', 'active-partner')
+
+      expect(pattern).toBeDefined()
+      expect(pattern.synonyms).toBeUndefined()
+    })
+
+    it('should handle synonyms with single item', () => {
+      const mockMarkdown = `---
+synonyms:
+  - Dementia
+---
+# Context Rot (Obstacle)
+
+## Description
+Context degrades as the conversation grows.`
+
+      mockedPath.join.mockReturnValue('/fake/path/documents/obstacles/context-rot.md')
+      mockedFs.readFileSync.mockReturnValue(mockMarkdown)
+
+      const pattern = getPatternBySlug('obstacles', 'context-rot')
+
+      expect(pattern).toBeDefined()
+      expect(pattern.synonyms).toEqual(['Dementia'])
+    })
+
     it('should handle alternative_titles with single item', () => {
       const mockMarkdown = `---
 alternative_titles:

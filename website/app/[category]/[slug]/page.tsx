@@ -128,6 +128,11 @@ export default async function PatternPage({ params }: PatternPageProps) {
                 Also known as: {pattern.alternativeTitles.join(', ')}
               </p>
             )}
+            {pattern.synonyms && pattern.synonyms.length > 0 && (
+              <p className="text-sm text-gray-500 mt-1">
+                Synonyms: {pattern.synonyms.join(', ')}
+              </p>
+            )}
           </div>
         </div>
         <span className={`${styles.category} ${styles[config.styleClass]}`}>

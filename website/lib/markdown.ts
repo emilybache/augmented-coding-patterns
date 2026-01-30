@@ -178,6 +178,7 @@ export function getPatternBySlug(
       ...(emoji && { emojiIndicator: emoji }),
       ...(data.authors && { authors: data.authors }),
       ...(data.alternative_titles && { alternativeTitles: data.alternative_titles }),
+      ...(data.synonyms && { synonyms: data.synonyms }),
       ...(mergedPatterns.length > 0 && { relatedPatterns: mergedPatterns }),
       ...(mergedAntiPatterns.length > 0 && { relatedAntiPatterns: mergedAntiPatterns }),
       ...(mergedObstacles.length > 0 && { relatedObstacles: mergedObstacles }),
