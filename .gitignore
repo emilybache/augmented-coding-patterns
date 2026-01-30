@@ -144,4 +144,4 @@ temp/
 playground/
 
 # Exceptions: Allow website source code
-!website/lib/
+!website/lib/playground/
