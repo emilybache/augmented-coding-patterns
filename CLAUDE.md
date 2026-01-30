@@ -6,8 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Next.js 15 static documentation website that presents an evolving collection of patterns, anti-patterns, and obstacles for developing software with LLMs. The site is deployed to GitHub Pages at https://lexler.github.io/augmented-coding-patterns/
 
-## Architecture
-
 See `specs/project.md` for the overall architecture and `specs/map.md` for the full directory map.
 
 All development work happens in the `/website/` directory.
@@ -36,53 +34,18 @@ npm run build                 # Create static site in out/ directory
 npm start                     # Serve production build locally
 ```
 
-## Key Implementation Details
+## Rules
 
-### Category Configuration System
-
-Never hardcode category-specific logic. Always use the centralized configuration in `app/lib/category-config.ts`:
-- `getCategoryConfig(category)` - Get config for a category
-- `isValidCategory(category)` - Validate category string
-
-### Content Processing
-
-The markdown processing pipeline (`lib/markdown.ts`):
-1. Reads markdown files from `../documents/{category}/`
-2. Extracts first H1 as title (including emoji if present)
-3. Removes category suffix from title (e.g., "(Anti-pattern)")
-4. Strips the first H1 from content (displayed separately in page header)
-
-### Static Site Generation
-
-This is a static export (`output: 'export'`) for GitHub Pages:
-- Uses `basePath: '/augmented-coding-patterns'` for GitHub Pages subpath
-- All pages must use `generateStaticParams()` for static generation
-- Cannot use server-side features, API routes, or dynamic image optimization
+- Never hardcode category-specific logic. Always use `getCategoryConfig(category)` and `isValidCategory(category)` from `app/lib/category-config.ts`
+- Always validate slugs with `validateSlug()` before file system access
+- Trailing slashes required on all URLs (GitHub Pages compatibility)
+- One H1 per page — first H1 is extracted as the page title, don't duplicate it
 - Always use Next.js `Link` component for internal navigation (handles basePath)
+- Static export only — no server-side features, API routes, or dynamic image optimization
+- All pages must use `generateStaticParams()` for static generation
+- Use `.nth(1)` to skip breadcrumb links when selecting pattern cards in tests
 
-### Important Patterns
-
-1. **Path validation required**: Always validate slugs with `validateSlug()` to prevent path traversal
-2. **Trailing slashes**: Required for GitHub Pages compatibility
-3. **One H1 per page**: First H1 is extracted and displayed as page title
-4. **Test patterns**: Use `.nth(1)` to skip breadcrumb links when selecting pattern cards in tests
-
-### Adding Content
-
-To add a new pattern, anti-pattern, or obstacle:
-1. Create `documents/{category}/{slug}.md`
-2. Include frontmatter with `authors: [author_id]` (see `specs/frontmatter.md` for all supported fields)
-3. Start with an H1 title (can include emoji)
-4. Add content sections (Problem, Solution, Example, etc.)
-5. Update `documents/relationships.mmd` to define relationships
-6. The content will automatically appear on the site after rebuild
-
-### Testing Strategy
-
-- **Unit tests** (`npm test`): Comprehensive coverage of components and utilities
-- **E2E tests** (`npm run test:e2e`): Minimal smoke tests for critical paths only
-
-## Existing Documentation
+## Documentation
 
 - `/specs/` - High-level project specs (architecture, content system, relationships, frontmatter, interactive map, website)
 - `/website/CLAUDE.md` - Detailed developer guide with implementation instructions
